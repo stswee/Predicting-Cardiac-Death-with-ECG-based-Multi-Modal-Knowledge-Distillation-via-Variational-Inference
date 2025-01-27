@@ -1,0 +1,81 @@
+Variable;Column;Notes;Codes
+Exit of the study;D;Cause of exit from the study;"0: survivor; "
+;;;"1: lost to follow-up;  "
+;;;"2: cardiac transplantation; "
+;;;"3: Death; "
+;;;According to closing date of the study
+Cause of death;E;Cause of death;"0: survivor; "
+;;;"1: non-cardiac death;  "
+;;;"3: SCD; "
+;;;"6-7: Pump-failure death; "
+;;;According to closing date of the study
+HF etiology - Diagnosis;P;Previous heart failure etiology;1: Idiopathic dilated cardiomyopathy
+;;;2: Ischemic dilated cardiomyopathy
+;;;3: Enolic dilated cardiomyopathy
+;;;4: Valvular cardiomyopathy
+;;;5: Toxic dilated cardiomyopathy
+;;;6: Post-myocardial dilated cardiomyopathy
+;;;7: Hypertrophic cardiomyopathy
+;;;8: Hypertensive cardiomyopathy
+;;;9: Other
+Prior implantable device;V;;0: No
+;;;1: Pacemaker-I
+;;;2: Pacemaker-II
+;;;3: Pacemaker-III
+;;;4: CRT-I
+;;;5: ICD
+;;;6: Unknown device
+;;;8: CRT-II
+Prior Revascularization;W;;0: No
+;;;1: Percutaneous revascularization
+;;;2: Surgical revascularization
+;;;3: Both
+Syncope;X;;0: NO
+;;;1: Yes, but not documented/studied
+;;;2: Yes, documented and studied
+Mitral valve insufficiency ;BC;;0: No
+;;;1: I/IV
+;;;2: II/IV
+;;;3: III/IV
+;;;4: IV/IV
+Mitral flow pattern;BD;;0: Normal
+;;;1: Impaired 
+;;;2: Pseudonormal
+;;;3: Restrictive
+;;;9: Others
+ECG rhythm ;BJ;Dominant rhythm in 20 min high-resolution ECG;"0: Sinusal; "
+;;;"1: Permanent AF; "
+;;;"2: Atrial flutter; "
+;;;3: Pacemaker
+Intraventricular conduction disorder;BS;;1: Right bundle branch block (RBBB)
+;;;2: Left bundle branch block (LBBB)
+;;;3: Hemibloqueo anterosuperior (HBA)
+;;;4: Hemibloqueo posteroinferior (HBP)
+;;;5: RBBB+HBA
+;;;6: RBBB+HBP
+;;;7: Others
+Holter  rhythm ;BV;Dominant rhythm in Holter ECG;"0: Sinusal; "
+;;;"1: Permanent AF; "
+;;;"2: Atrial flutter; "
+;;;3: Pacemaker
+Ventricular Extrasystole;CC;;0: No
+;;;1: Monomorphic
+;;;2: Polymorphic
+;;;3: Couplets
+Ventricular Tachycardia;CD;;0: No
+;;;1: Non-sustained VT
+;;;2: Sustained VT
+;;;3: Torsade de Points
+Paroxysmal supraventricular tachyarrhythmia;CH;;0: No 
+;;;1: TPSV 
+;;;2: Parosysmal AF 
+;;;3: Paroxismal flutter 
+;;;4: others
+;;;9:NAxFA crónica
+Bradycardia;CJ;;0: No
+;;;1: Sinus Node Dysfunction
+;;;2: First-degree Atrioventricular block (AVB)
+;;;3: Second-degree AVB - type I
+;;;4: Second-degree AVB - type II
+;;;5: Third-degree AVB
+;;;6: Paroxysmal AVB
