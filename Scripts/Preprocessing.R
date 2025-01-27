@@ -2,7 +2,6 @@
 library(readr)
 library(dplyr)
 
-
 # Read in dataset
 df <- read_delim("..//Data/subject-info.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
 
