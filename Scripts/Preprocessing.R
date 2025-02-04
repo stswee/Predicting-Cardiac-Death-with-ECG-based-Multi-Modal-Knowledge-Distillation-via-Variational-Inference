@@ -46,8 +46,12 @@ for (i in 1:ncol(df_sinus)){
 }
 df_sinus <- df_sinus %>% select(-all_of(dropped_columns)) # Results in 702 observations
 
+# Get patients with both high-resolution ECG and Holter ECG
+df_sinus <- df_sinus %>% filter(df_sinus$`Hig-resolution ECG available` != 0)
+df_sinus <- df_sinus %>% filter(df_sinus$`Holter available` != 0) # Results in 468 patients
+
 # For first pass, delete rows with missing values
-df_sinus <- na.omit(df_sinus) # Results in 535 observations
+df_sinus <- na.omit(df_sinus) # Results in 380 observations
 
 # Print dataframe to csv file (to later be used in Python)
 write.csv(df_sinus, file = "../Data/subject-info-cleaned.csv")
