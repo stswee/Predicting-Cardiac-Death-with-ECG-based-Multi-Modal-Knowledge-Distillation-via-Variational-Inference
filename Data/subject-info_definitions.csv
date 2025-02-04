@@ -1,16 +1,16 @@
-Variable ;Column;Definition;;;;
-NYHA class;M;New York Heart Association classs;;;;
-ALT o GPT (IU/L);AD;Alanine Aminotransferase or Glutamic Pyruvic Transaminase;;;;
-AST o GOT (IU/L);AE;Aspartate Aminotransferase or Glutamyl oxaloacetic transaminase;;;;
-HDL (mmol/L);AL;High-density lipoprotein cholesterol;;;;
-LDL (mmol/L);AN;Low Density Lipoprotein Cholesterol;;;;
-Pro-BNP (ng/L);AP;pro b-type natriuretic peptide;;;;
-T3 (pg/dL);AR;Triiodothyronine;;;;
-T4 (ng/L);AS;Thyroxine;;;;
-TSH (mIU/L);AU;Thyroid Stimulating Hormone;;;;
-LVEF (%);BB;Left Ventricular Ejection Fraction ;;;;
-SDNN (ms);CK;Standard deviation of NN intervals;;;;
-SDANN (ms);CL;Standard deviation of the average NN intervals for each 5?min segment of a 24?h HRV recording;;;;
-RMSSD (ms);CM;Root mean square of successive RR interval differences;;;;
-pNN50 (%);CN;Percentage of successive RR intervals that differ by more than 50?ms;;;;
-ACE inhibitor;CZ;Angiotensin-converting enzyme inhibitors;;;;
+Variable ;Column;Definition
+NYHA class;K;New York Heart Association classs
+ALT o GPT (IU/L);AB;Alanine Aminotransferase or Glutamic Pyruvic Transaminase
+AST o GOT (IU/L);AC;Aspartate Aminotransferase or Glutamyl oxaloacetic transaminase
+HDL (mmol/L);AJ;High-density lipoprotein cholesterol
+LDL (mmol/L);AL;Low Density Lipoprotein Cholesterol
+Pro-BNP (ng/L);AN;pro b-type natriuretic peptide
+T3 (pg/dL);AP;Triiodothyronine
+T4 (ng/L);AQ;Thyroxine
+TSH (mIU/L);AS;Thyroid Stimulating Hormone
+LVEF (%);AZ;Left Ventricular Ejection Fraction 
+SDNN (ms);CI;Standard deviation of NN intervals
+SDANN (ms);CJ;Standard deviation of the average NN intervals for each 5?min segment of a 24?h HRV recording
+RMSSD (ms);CK;Root mean square of successive RR interval differences
+pNN50 (%);CL;Percentage of successive RR intervals that differ by more than 50?ms
+ACE inhibitor;CX;Angiotensin-converting enzyme inhibitors

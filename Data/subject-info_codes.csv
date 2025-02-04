@@ -9,7 +9,7 @@ Cause of death;E;Cause of death;"0: survivor; "
 ;;;"3: SCD; "
 ;;;"6-7: Pump-failure death; "
 ;;;According to closing date of the study
-HF etiology - Diagnosis;P;Previous heart failure etiology;1: Idiopathic dilated cardiomyopathy
+HF etiology - Diagnosis;N;Previous heart failure etiology;1: Idiopathic dilated cardiomyopathy
 ;;;2: Ischemic dilated cardiomyopathy
 ;;;3: Enolic dilated cardiomyopathy
 ;;;4: Valvular cardiomyopathy
@@ -18,7 +18,7 @@ HF etiology - Diagnosis;P;Previous heart failure etiology;1: Idiopathic dilated 
 ;;;7: Hypertrophic cardiomyopathy
 ;;;8: Hypertensive cardiomyopathy
 ;;;9: Other
-Prior implantable device;V;;0: No
+Prior implantable device;T;;0: No
 ;;;1: Pacemaker-I
 ;;;2: Pacemaker-II
 ;;;3: Pacemaker-III
@@ -26,53 +26,53 @@ Prior implantable device;V;;0: No
 ;;;5: ICD
 ;;;6: Unknown device
 ;;;8: CRT-II
-Prior Revascularization;W;;0: No
+Prior Revascularization;U;;0: No
 ;;;1: Percutaneous revascularization
 ;;;2: Surgical revascularization
 ;;;3: Both
-Syncope;X;;0: NO
+Syncope;V;;0: NO
 ;;;1: Yes, but not documented/studied
 ;;;2: Yes, documented and studied
-Mitral valve insufficiency ;BC;;0: No
+Mitral valve insufficiency ;BA;;0: No
 ;;;1: I/IV
 ;;;2: II/IV
 ;;;3: III/IV
 ;;;4: IV/IV
-Mitral flow pattern;BD;;0: Normal
+Mitral flow pattern;BB;;0: Normal
 ;;;1: Impaired 
 ;;;2: Pseudonormal
 ;;;3: Restrictive
 ;;;9: Others
-ECG rhythm ;BJ;Dominant rhythm in 20 min high-resolution ECG;"0: Sinusal; "
+ECG rhythm ;BH;Dominant rhythm in 20 min high-resolution ECG;"0: Sinusal; "
 ;;;"1: Permanent AF; "
 ;;;"2: Atrial flutter; "
 ;;;3: Pacemaker
-Intraventricular conduction disorder;BS;;1: Right bundle branch block (RBBB)
+Intraventricular conduction disorder;BQ;;1: Right bundle branch block (RBBB)
 ;;;2: Left bundle branch block (LBBB)
 ;;;3: Hemibloqueo anterosuperior (HBA)
 ;;;4: Hemibloqueo posteroinferior (HBP)
 ;;;5: RBBB+HBA
 ;;;6: RBBB+HBP
 ;;;7: Others
-Holter  rhythm ;BV;Dominant rhythm in Holter ECG;"0: Sinusal; "
+Holter  rhythm ;BT;Dominant rhythm in Holter ECG;"0: Sinusal; "
 ;;;"1: Permanent AF; "
 ;;;"2: Atrial flutter; "
 ;;;3: Pacemaker
-Ventricular Extrasystole;CC;;0: No
+Ventricular Extrasystole;CA;;0: No
 ;;;1: Monomorphic
 ;;;2: Polymorphic
 ;;;3: Couplets
-Ventricular Tachycardia;CD;;0: No
+Ventricular Tachycardia;CB;;0: No
 ;;;1: Non-sustained VT
 ;;;2: Sustained VT
 ;;;3: Torsade de Points
-Paroxysmal supraventricular tachyarrhythmia;CH;;0: No 
+Paroxysmal supraventricular tachyarrhythmia;CF;;0: No 
 ;;;1: TPSV 
 ;;;2: Parosysmal AF 
 ;;;3: Paroxismal flutter 
 ;;;4: others
 ;;;9:NAxFA crónica
-Bradycardia;CJ;;0: No
+Bradycardia;CH;;0: No
 ;;;1: Sinus Node Dysfunction
 ;;;2: First-degree Atrioventricular block (AVB)
 ;;;3: Second-degree AVB - type I
