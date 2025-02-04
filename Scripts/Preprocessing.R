@@ -7,7 +7,7 @@ df <- read_delim("..//Data/subject-info.csv", delim = ";", escape_double = FALSE
 
 # Preprocessing
 # Remove extraneous columns
-df <- df[, 1:105]
+# df <- df[, 1:105]
 
 # Check for columns with missing values
 for (i in 1:ncol(df)){
@@ -33,36 +33,23 @@ df_sinus <- df[df$`ECG rhythm` == 0, ]
 # Assign patients with exit of study as NA to values of 0 (assume survivor)
 df_sinus$`Exit of the study`[is.na(df_sinus$`Exit of the study`)] <- 0
 
-# # Drop columns with more than 10% of values missing
-# missing_threshold <- nrow(df_sinus) / 10
-# dropped_columns <- c()
-# for (i in 1:ncol(df_sinus)){
-#   if (any(is.na(df_sinus[,i]))){
-#     num_missing <- sum(is.na(df_sinus[,i]))
-#     if (num_missing >= missing_threshold){
-#       dropped_columns <- c(dropped_columns, colnames(df_sinus)[i])
-#     }
-#   }
-# }
-# df_sinus <- df_sinus %>% select(-all_of(dropped_columns)) # Results in 702 observations
+# Remove patients with non-cardiac deaths
+df_sinus <- df_sinus[df_sinus$`Cause of death` != 1, ] # Down to 667 patients
 
-# Get patients with both high-resolution ECG and Holter ECG
+# Reassign pump failure values to only be 7
+df_sinus$`Cause of death`[df_sinus$`Cause of death` == 7] <- 6
+
+# Get patients with Holter ECG
 # df_sinus <- df_sinus %>% filter(df_sinus$`Hig-resolution ECG available` != 0)
-df_sinus <- df_sinus %>% filter(df_sinus$`Holter available` != 0) # Results in 659 patients
+df_sinus <- df_sinus %>% filter(df_sinus$`Holter available` != 0) # Results in 627 patients
 
-# For first pass, delete rows with missing values
-# df_sinus <- na.omit(df_sinus) # Results in 380 observations
+# Sort by class
+df_sinus <- df_sinus[order(df_sinus$`Cause of death`),]
+
+# Number in each class
+table(df_sinus$`Cause of death`)
 
 # Print dataframe to csv file (to later be used in Python)
 write.csv(df_sinus, file = "../Data/subject-info-cleaned.csv")
 
-# TODO: If time, perform missing value imputation
-
-# Check for columns with missing values
-# for (i in 1:ncol(df_sinus)){
-#   if (any(is.na(df_sinus[,i]))){
-#     num_missing <- sum(is.na(df_sinus[,i]))
-#     message(paste("The column ", colnames(df_sinus)[i], "has ", num_missing, "missing values."))
-#   } 
-# }
 
