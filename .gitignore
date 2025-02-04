@@ -1,7 +1,7 @@
 # Byte-compiled / cache files
 #
 
-Holter_ECG/
+Holter_ECG_Dataset/
 
 __pycache__/
 *.py[cod]
