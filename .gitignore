@@ -1,0 +1,72 @@
+# Byte-compiled / cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Virtual environment
+venv/
+env/
+*.venv/
+
+# Conda environment
+*.conda
+*.env
+*.yml
+
+# Logs and output files
+*.log
+*.out
+*.err
+
+# Hidden system files
+.DS_Store
+Thumbs.db
+
+# Python package distribution
+dist/
+build/
+*.egg-info/
+
+# IDE & Editor settings
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Data and models
+*.h5
+*.pt
+*.pth
+*.onnx
+*.joblib
+*.pickle
+*.pkl
+
+# Large CSVs, datasets, and output files
+*.csv
+*.tsv
+*.parquet
+*.json
+*.db
+*.sqlite
+*.feather
+
+# Jupyter Notebook metadata
+.ipynb_checkpoints/
+
+# Ignore large images and videos
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.mp4
+*.avi
+*.mkv
+
+# Ignore configuration files (optional)
+config.json
+settings.yaml
+
