@@ -33,25 +33,25 @@ df_sinus <- df[df$`ECG rhythm` == 0, ]
 # Assign patients with exit of study as NA to values of 0 (assume survivor)
 df_sinus$`Exit of the study`[is.na(df_sinus$`Exit of the study`)] <- 0
 
-# Drop columns with more than 10% of values missing
-missing_threshold <- nrow(df_sinus) / 10
-dropped_columns <- c()
-for (i in 1:ncol(df_sinus)){
-  if (any(is.na(df_sinus[,i]))){
-    num_missing <- sum(is.na(df_sinus[,i]))
-    if (num_missing >= missing_threshold){
-      dropped_columns <- c(dropped_columns, colnames(df_sinus)[i])
-    }
-  }
-}
-df_sinus <- df_sinus %>% select(-all_of(dropped_columns)) # Results in 702 observations
+# # Drop columns with more than 10% of values missing
+# missing_threshold <- nrow(df_sinus) / 10
+# dropped_columns <- c()
+# for (i in 1:ncol(df_sinus)){
+#   if (any(is.na(df_sinus[,i]))){
+#     num_missing <- sum(is.na(df_sinus[,i]))
+#     if (num_missing >= missing_threshold){
+#       dropped_columns <- c(dropped_columns, colnames(df_sinus)[i])
+#     }
+#   }
+# }
+# df_sinus <- df_sinus %>% select(-all_of(dropped_columns)) # Results in 702 observations
 
 # Get patients with both high-resolution ECG and Holter ECG
-df_sinus <- df_sinus %>% filter(df_sinus$`Hig-resolution ECG available` != 0)
-df_sinus <- df_sinus %>% filter(df_sinus$`Holter available` != 0) # Results in 468 patients
+# df_sinus <- df_sinus %>% filter(df_sinus$`Hig-resolution ECG available` != 0)
+df_sinus <- df_sinus %>% filter(df_sinus$`Holter available` != 0) # Results in 659 patients
 
 # For first pass, delete rows with missing values
-df_sinus <- na.omit(df_sinus) # Results in 380 observations
+# df_sinus <- na.omit(df_sinus) # Results in 380 observations
 
 # Print dataframe to csv file (to later be used in Python)
 write.csv(df_sinus, file = "../Data/subject-info-cleaned.csv")
