@@ -1,5 +1,5 @@
 echo "Setting up ECG LLM environment..."
-echo "Using CUDA 12.2 and Python 3.11"
+echo "Using CUDA 11.8 and Python 3.11"
 
 conda install -y pip
 
@@ -10,7 +10,7 @@ echo "Installing data processing dependencies..."
 conda install -y scikit-learn networkx scipy
 
 echo "Installing PyTorch and CUDA..."
-conda install -y pytorch==2.2.1 torchvision==0.17.1 torchaudio==2.2.1 pytorch-cuda=12.2 -c pytorch -c nvidia
+conda install pytorch==2.3.0 torchvision==0.18.0 torchaudio==2.3.0 pytorch-cuda=11.8 -c pytorch -c nvidia
 
 echo "Installing NLP libraries..."
 conda install -y -c conda-forge transformers tokenizers sentencepiece
