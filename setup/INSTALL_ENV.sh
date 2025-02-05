@@ -1,34 +1,33 @@
-#cuda 12.4, python 11
+echo "Setting up ECG LLM environment..."
+echo "Using CUDA 12.2 and Python 3.11"
 
-#cuda 12.4, python 11
 conda install -y pip
 
-#stl
-conda install -y pandas
-conda install -y numpy
-conda install -y matplotlib
-conda install -y seaborn
-conda install -y tqdm
-conda install -y ipykernel
-conda install -y jupyter
+echo "Installing core libraries..."
+conda install -y pandas numpy matplotlib seaborn tqdm ipykernel jupyter
 
-#data processing
-conda install -y scikit-learn
-conda install -y networkx
-conda install -y scipy
+echo "Installing data processing dependencies..."
+conda install -y scikit-learn networkx scipy
 
-#kernel
+echo "Installing PyTorch and CUDA..."
+conda install -y pytorch==2.2.1 torchvision==0.17.1 torchaudio==2.2.1 pytorch-cuda=12.2 -c pytorch -c nvidia
+
+echo "Installing NLP libraries..."
+conda install -y -c conda-forge transformers tokenizers sentencepiece
+
+echo "Installing Hugging Face libraries..."
+pip install datasets accelerate huggingface_hub
+
+echo "Installing ECG data processing libraries..."
+pip install wfdb
+
+echo "Installing LLM libraries..."
+pip install langchain llama-index openai
+
+echo "Installing API dependencies..."
+pip install fastapi uvicorn
+
+echo "Setting up Jupyter kernel..."
 python -m ipykernel install --user --name="ecg_llm"
 
-#ai stack (torch = 2.2, cuda = 11.8, pyg = 2.5.0) --> compatible with cuda 12.2
-conda install pytorch==2.2.1 torchvision==0.17.1 torchaudio==2.2.1 pytorch-cuda=12.2 -c pytorch -c nvidia
-
-conda install -y -c conda-forge transformers tokenizers
-
-pip install openai
-
-conda install -y -c conda-forge sentencepiece
-
-pip install langchain
-pip install fastapi uvicorn
-pip install llama-index
+echo "Installation complete. Activate the environment with: conda activate ecg_llm"
