@@ -28,20 +28,23 @@ holter <- seq(74, 92) # 74, 75, ..., 92
 medications <- seq(93, 105) # 93, 94, ..., 105
 
 # Limit study to patients with sinus rhythms
-df_sinus <- df[df$`ECG rhythm` == 0, ]
+df_sinus <- df[df$`Holter  rhythm` == 0, ] # 710 patients
 
 # Assign patients with exit of study as NA to values of 0 (assume survivor)
-df_sinus$`Exit of the study`[is.na(df_sinus$`Exit of the study`)] <- 0
+df_sinus$`Exit of the study`[is.na(df_sinus$`Exit of the study`)] <- 0 
+
+# Remove patients who were lost to follow-up or had cardiac transplantation
+df_sinus <- df_sinus[df_sinus$`Exit of the study` == 0 | df_sinus$`Exit of the study` == 3,] # 694 patients
 
 # Remove patients with non-cardiac deaths
-df_sinus <- df_sinus[df_sinus$`Cause of death` != 1, ] # Down to 667 patients
+df_sinus <- df_sinus[df_sinus$`Cause of death` != 1, ] # Down to 663 patients
 
 # Reassign pump failure values to only be 7
 df_sinus$`Cause of death`[df_sinus$`Cause of death` == 7] <- 6
 
 # Get patients with Holter ECG
 # df_sinus <- df_sinus %>% filter(df_sinus$`Hig-resolution ECG available` != 0)
-df_sinus <- df_sinus %>% filter(df_sinus$`Holter available` != 0) # Results in 627 patients
+df_sinus <- df_sinus %>% filter(df_sinus$`Holter available` != 0) # Results in 604 patients
 
 # Sort by class
 df_sinus <- df_sinus[order(df_sinus$`Cause of death`),]
