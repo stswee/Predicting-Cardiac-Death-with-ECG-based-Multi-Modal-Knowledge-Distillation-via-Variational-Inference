@@ -5,83 +5,13 @@ import numpy as np
 import torch
 import csv
 from torch.utils.data import Dataset, DataLoader
-from torchvision.datasets import ImageFolder
+from torchvision.datasets import ecg_signalFolder
 from torchvision import transforms
-from PIL import Image
-
+from PIL import ecg_signal
+import wfdb
 
 def is_power_of_2(num):
     return ((num & (num - 1)) == 0) and num != 0
-
-
-
-class UTKLoader(Dataset):
-    def __init__(self,split,ta,sa,data_folder,transform):
-        self.data_folder=data_folder
-        if split==0:
-            self.img_list=os.listdir(self.data_folder+'train/')
-        elif split==1:
-            self.img_list=os.listdir(self.data_folder+'val/')
-        else :
-            self.img_list=os.listdir(self.data_folder+'test/')
-
-        self.img_list.sort()
-        self.transform=transform
-        self.att=[]
-        self.split=split
-        self.ethnicity_list=[]
-        self.age_list=[]
-        self.gender_list=[]
-        self.ta=ta
-        self.sa=sa
-        self.split=split
-
-        for i in range(len(self.img_list)):
-            self.age_list.append(int(self.img_list[i].split('_')[0])<35)
-            self.ethnicity_list.append(int(self.img_list[i].split('_')[2]=='0'))
-            self.gender_list.append(int(self.img_list[i].split('_')[1]=='0'))
-        
-        
-
-    def __getitem__(self, index1):
-
-        index2=random.choice(range(len(self.img_list)))
-        age=int(self.age_list[index1])
-        gender=int(self.gender_list[index1])
-        ethnicity=int(self.ethnicity_list[index1])
-        ta=0
-        sa=0
-
-        if self.split==0:
-            img1=Image.open(self.data_folder+'train/'+self.img_list[index1])
-            img2=Image.open(self.data_folder+'train/'+self.img_list[index2])
-        elif self.split==1:
-            img1=Image.open(self.data_folder+'val/'+self.img_list[index1])
-            img2=Image.open(self.data_folder+'val/'+self.img_list[index2])
-        else:
-            img1=Image.open(self.data_folder+'test/'+self.img_list[index1])
-            img2=Image.open(self.data_folder+'test/'+self.img_list[index2])
-
-        if self.ta=='gender':
-            ta=gender
-        elif self.ta=='age':
-            ta=age
-        elif self.ta=='ethnicity':
-            ta=ethnicity
-        
-        if self.sa=="gender":
-            sa=gender
-        elif self.sa=="age":
-            sa=age
-        elif self.sa=="ethnicity":
-            sa=ethnicity
-    
-        return self.transform(img1),ta,sa
-
-
-    def __len__(self):
-        return (len(self.img_list)-1)
-
 
 class CelebaLoader(Dataset):
     def __init__(self,split,ta,ta2,sa,sa2,data_folder,transform):
@@ -139,14 +69,14 @@ class CelebaLoader(Dataset):
         
         index2=random.choice(range(len(self.img_list)))
         if self.split==0:
-            img1=Image.open(self.data_folder+'train/'+self.img_list[index1])
-            img2=Image.open(self.data_folder+'train/'+self.img_list[index2])
+            img1=ecg_signal.open(self.data_folder+'train/'+self.img_list[index1])
+            img2=ecg_signal.open(self.data_folder+'train/'+self.img_list[index2])
         elif self.split==1:
-            img1=Image.open(self.data_folder+'val/'+self.img_list[index1])
-            img2=Image.open(self.data_folder+'val/'+self.img_list[index2])
+            img1=ecg_signal.open(self.data_folder+'val/'+self.img_list[index1])
+            img2=ecg_signal.open(self.data_folder+'val/'+self.img_list[index2])
         else:
-            img1=Image.open(self.data_folder+'test/'+self.img_list[index1])
-            img2=Image.open(self.data_folder+'test/'+self.img_list[index2])
+            img1=ecg_signal.open(self.data_folder+'test/'+self.img_list[index1])
+            img2=ecg_signal.open(self.data_folder+'test/'+self.img_list[index2])
     
      
         return self.transform(img1),ta,sa
@@ -154,3 +84,25 @@ class CelebaLoader(Dataset):
 
     def __len__(self):
         return len(self.att)
+
+
+class HolterECGLoader(Dataset):
+    def __init__(self, csv_file, ecg_dir, transform=None):
+        self.dataset = pd.read_csv(csv_file)
+        self.ecg_dir = ecg_dir
+        self.transform = transform
+
+    def __len__(self):
+        return len(self.dataset)
+
+    def __getitem__(self, idx):
+        if torch.is_tensor(idx):
+            idx = idx.tolist()
+        
+        ecg_filename = os.path.join(self.ecg_dir, self.dataset.iloc[idx, 0] + '.dat')
+        ecg_signal = wfdb.rdrecord(ecg_filename)
+        dx = self.dataset.iloc[idx, 1] # check this one
+        if self.transform:
+            ecg_signal = self.transform(ecg_signal)
+        return ecg_signal, dx
+    

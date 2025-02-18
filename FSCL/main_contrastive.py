@@ -15,7 +15,7 @@ from util import adjust_learning_rate, warmup_learning_rate
 from util import set_optimizer, save_model
 from networks.resnet_big import FairSupConResNet
 from losses import FairSupConLoss
-from dataset import UTKLoader, UTKLoader, CelebaLoader
+from dataset import HolterECGLoader, CelebaLoader
 
 try:
     import apex
@@ -52,8 +52,8 @@ def parse_option():
 
     # model dataset
     parser.add_argument('--model', type=str, default='resnet18')
-    parser.add_argument('--dataset', type=str, default='celeba',
-                        choices=['celeba','utkface'], help='dataset')
+    parser.add_argument('--dataset', type=str, default='holterecg',
+                        choices=['celeba','holterecg'], help='dataset')
     parser.add_argument('--data_folder', type=str, default=None, help='path to dataset')
     parser.add_argument('--mean', type=str, help='mean of dataset in path in form of str tuple')
     parser.add_argument('--std', type=str, help='std of dataset in path in form of str tuple')
@@ -64,8 +64,8 @@ def parse_option():
     
 
     # method
-    parser.add_argument('--method', type=str, default='FSCL',
-                        choices=['FSCL','FSCL*','SupCon', 'SimCLR'], help='choose method')
+    parser.add_argument('--method', type=str, default='SimCLR',
+                        choices=['SimCLR'], help='choose method')
     #norm
     parser.add_argument('--group_norm', type=int, default=0, help='group normalization')
     # temperature
@@ -149,8 +149,14 @@ def set_loader(opt):
         normalize,
     ])
 
-    if opt.dataset == 'utkface':
-        train_dataset = UTKLoader(0,ta=opt.target_attribute_1,sa=opt.sensitive_attribute_1,data_folder=opt.data_folder,transform=TwoCropTransform(train_transform))
+    if opt.dataset == 'HolterECG':
+        transform = transforms.Compose([
+        transforms.ToTensor(),
+        ])
+        holterecg_dataset = HolterECGLoader(csv_file='/projects/bdlo/music-sudden-cardiac-death/subject-info.csv', ecg__dir='/projects/bdlo/music-sudden-cardiac-death/Holter_ECG', transform=TwoCropTransform(train_transform))
+        train_idx, val_idx = train_test_split(list(range(len(holterecg_dataset))), test_size=0.2, stratify=holterecg_dataset.dataset['isnv'])
+        train_sampler = SubsetRandomSampler(train_idx)
+        train_loader = DataLoader(holterecg_dataset, batch_size=36, sampler=train_sampler)
     
     elif opt.dataset == 'celeba':
         train_dataset = CelebaLoader(0,ta=opt.target_attribute_1,ta2=opt.target_attribute_2,sa=opt.sensitive_attribute_1,sa2=opt.sensitive_attribute_2,data_folder=opt.data_folder,transform=TwoCropTransform(train_transform))
@@ -215,14 +221,13 @@ def train(train_loader, model, criterion, optimizer, epoch, opt):
     
     end = time.time()
 
-    for idx, (images,ta,sa) in enumerate(train_loader):
+    for idx, (images,ta) in enumerate(train_loader):
         data_time.update(time.time() - end)
 
         images = torch.cat([images[0], images[1]], dim=0)
         if torch.cuda.is_available():
             images = images.cuda(non_blocking=True)
             ta = ta.cuda(non_blocking=True)
-            sa = sa.cuda(non_blocking=True)
         bsz = ta.shape[0]
       
         # warm-up learning rate
@@ -235,11 +240,7 @@ def train(train_loader, model, criterion, optimizer, epoch, opt):
         f1, f2 = torch.split(features, [bsz, bsz], dim=0)
         features = torch.cat([f1.unsqueeze(1), f2.unsqueeze(1)], dim=1)
 
-
-
-
-        loss = criterion(features,ta,sa,opt.group_norm,opt.method,epoch)
-
+        loss = criterion(features,ta,opt.group_norm,opt.method,epoch)
     
         # update metric
         losses.update(loss.item(), bsz)
@@ -278,8 +279,6 @@ def main():
     # build optimizer
     optimizer = set_optimizer(opt, model)
 
-
-    
     # training routine
     for epoch in range(s_epoch+1, opt.epochs + 1):
         
@@ -290,8 +289,6 @@ def main():
         loss = train(train_loader, model, criterion, optimizer, epoch, opt)
         time2 = time.time()
         print('epoch {}, total time {:.2f}'.format(epoch, time2 - time1))
-
-     
 
         if epoch % opt.save_freq == 0:
             save_file = os.path.join(

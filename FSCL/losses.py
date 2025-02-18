@@ -14,12 +14,11 @@ class FairSupConLoss(nn.Module):
         self.base_temperature = base_temperature
 
     
-    def forward(self, features, labels,sensitive_labels,group_norm,method, epoch,mask=None):
+    def forward(self, features,labels,group_norm,method, epoch,mask=None):
         """
         Args:
             features: hidden vector of shape [bsz, n_views, ...].
             labels: target classes of shape [bsz].
-            sensitive_labels: sensitive attributes of shape [bsz].
             mask: contrastive mask of shape [bsz, bsz], mask_{i,j}=1 if sample j
                 has the same class as sample i. Can be asymmetric.
         Returns:
@@ -44,11 +43,9 @@ class FairSupConLoss(nn.Module):
             mask = torch.eye(batch_size, dtype=torch.float32).to(device)
         elif labels is not None:
             labels = labels.contiguous().view(-1, 1)
-            sensitive_labels = sensitive_labels.contiguous().view(-1, 1)
             if labels.shape[0] != batch_size:
                 raise ValueError('Num of labels does not match num of features')
             mask = torch.eq(labels, labels.T).float().to(device)
-            sensitive_mask = torch.eq(sensitive_labels, sensitive_labels.T).float().to(device)
         else:
             mask = mask.float().to(device)
 
@@ -75,8 +72,7 @@ class FairSupConLoss(nn.Module):
         
         # tile mask
         mask = mask.repeat(anchor_count, contrast_count)
-        sensitive_mask = sensitive_mask.repeat(anchor_count, contrast_count)
-        n_sensitive_mask=(~sensitive_mask.bool()).float()
+    
         # mask-out self-contrast cases
         logits_mask = torch.scatter(
             torch.ones_like(mask),
@@ -85,53 +81,17 @@ class FairSupConLoss(nn.Module):
             0
         )
 
-        # compute log_prob
-        if method=="FSCL":
-            mask = mask * logits_mask
-            logits_mask_fair=logits_mask*(~mask.bool()).float()*sensitive_mask
-            exp_logits_fair = torch.exp(logits) * logits_mask_fair
-            exp_logits_sum=exp_logits_fair.sum(1, keepdim=True)
-            log_prob = logits - torch.log(exp_logits_sum+((exp_logits_sum==0)*1))
-
-        elif method=="SupCon":
-            mask = mask * logits_mask
-            exp_logits = torch.exp(logits) * logits_mask
-            log_prob = logits - torch.log(exp_logits.sum(1, keepdim=True))
-
-        elif method=="FSCL*":
-            mask = torch.eye(batch_size, dtype=torch.float32).to(device)
-            mask = mask.repeat(anchor_count, contrast_count)
-            mask=mask*logits_mask
-                
-            logits_mask_fair=logits_mask*sensitive_mask
-            exp_logits_fair = torch.exp(logits) * logits_mask_fair
-            exp_logits_sum=exp_logits_fair.sum(1, keepdim=True)
-            log_prob = logits - torch.log(exp_logits_sum+((exp_logits_sum==0)*1))
-
-        elif method=="SimCLR":
+        if method=="SimCLR":
             mask = torch.eye(batch_size, dtype=torch.float32).to(device)
             mask = mask.repeat(anchor_count, contrast_count)
             mask=mask*logits_mask
             exp_logits = torch.exp(logits) * logits_mask
             log_prob = logits - torch.log(exp_logits.sum(1, keepdim=True))
 
-              
-        # compute mean of log-likelihood over positive
-        #apply group normalization
-        if group_norm==1:
-            mean_log_prob_pos = ((mask*log_prob)/((mask*sensitive_mask).sum(1))).sum(1)
-           
-        else:
-            mean_log_prob_pos = (mask * log_prob).sum(1) / mask.sum(1)
+        mean_log_prob_pos = (mask * log_prob).sum(1) / mask.sum(1)
     
         loss = - (self.temperature / self.base_temperature) * mean_log_prob_pos
-
-        #apply group normalization
-        if group_norm==1:
-            C=loss.size(0)/8
-            norm=(1/(((mask*sensitive_mask).sum(1)+1).float()))
-            loss=(loss*norm)*C
-            
+        
         loss = loss.view(anchor_count, batch_size).mean()
 
         return loss
