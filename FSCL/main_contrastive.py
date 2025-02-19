@@ -153,7 +153,7 @@ def set_loader(opt):
         transform = transforms.Compose([
         transforms.ToTensor(),
         ])
-        holterecg_dataset = HolterECGLoader(csv_file='/projects/bdlo/music-sudden-cardiac-death/subject-info.csv', ecg__dir='/projects/bdlo/music-sudden-cardiac-death/Holter_ECG', transform=TwoCropTransform(train_transform))
+        holterecg_dataset = HolterECGLoader(csv_file='/projects/bdlo/music-sudden-cardiac-death/subject-info-cleaned.csv', ecg__dir='/projects/bdlo/music-sudden-cardiac-death/Holter_ECG', transform=TwoCropTransform(train_transform))
         train_idx, val_idx = train_test_split(list(range(len(holterecg_dataset))), test_size=0.2, stratify=holterecg_dataset.dataset['isnv'])
         train_sampler = SubsetRandomSampler(train_idx)
         train_loader = DataLoader(holterecg_dataset, batch_size=36, sampler=train_sampler)
