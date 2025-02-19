@@ -5,10 +5,11 @@ import numpy as np
 import torch
 import csv
 from torch.utils.data import Dataset, DataLoader
-from torchvision.datasets import ecg_signalFolder
+from torchvision.datasets import ImageFolder
 from torchvision import transforms
-from PIL import ecg_signal
+from PIL import Image
 import wfdb
+import pandas as pd
 
 def is_power_of_2(num):
     return ((num & (num - 1)) == 0) and num != 0
@@ -88,7 +89,7 @@ class CelebaLoader(Dataset):
 
 class HolterECGLoader(Dataset):
     def __init__(self, csv_file, ecg_dir, transform=None):
-        self.dataset = pd.read_csv(csv_file)
+        self.dataset = pd.read_csv(csv_file, sep=";")
         self.ecg_dir = ecg_dir
         self.transform = transform
 
@@ -99,10 +100,19 @@ class HolterECGLoader(Dataset):
         if torch.is_tensor(idx):
             idx = idx.tolist()
         
-        ecg_filename = os.path.join(self.ecg_dir, self.dataset.iloc[idx, 0] + '.dat')
-        ecg_signal = wfdb.rdrecord(ecg_filename)
-        dx = self.dataset.iloc[idx, 1] # check this one
-        if self.transform:
-            ecg_signal = self.transform(ecg_signal)
-        return ecg_signal, dx
-    
+        ecg_filename = os.path.join(self.ecg_dir, self.dataset.iloc[idx, 0])
+        # ecg_signal = wfdb.rdrecord(ecg_filename)
+        ecg_signal, _ = wfdb.rdsamp(ecg_filename)
+
+        total_samples = ecg_signal.shape[0]
+        target_samples = 14500000 # just take these because every ECG is abit uneven
+        if total_samples >= target_samples:
+            start_idx = (total_samples - target_samples) // 2 
+            end_idx = start_idx + target_samples
+            ecg_signal = ecg_signal[start_idx:end_idx]
+        else:
+            raise ValueError(f"ECG {ecg_filename} has only {total_samples} samples, which is too short for cropping.")
+
+        # if self.transform:
+        #     ecg_signal = self.transform(ecg_signal)
+        return ecg_signal
