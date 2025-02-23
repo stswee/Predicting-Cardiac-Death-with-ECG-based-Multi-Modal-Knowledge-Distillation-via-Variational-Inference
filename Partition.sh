@@ -13,4 +13,4 @@
 module load cuda/11.8 # Load CUDA
 
 # Test LLM
-python LLM_Testing.py
+python knowledge_distillation.py
