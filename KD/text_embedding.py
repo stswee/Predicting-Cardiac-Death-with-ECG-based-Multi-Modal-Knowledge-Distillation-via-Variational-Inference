@@ -16,6 +16,10 @@ from torch.utils.data import Dataset, DataLoader, TensorDataset
 # transformers
 from transformers import AutoModel, AutoTokenizer
 
+# Load BioBERT Model
+tokenizer = AutoTokenizer.from_pretrained("dmis-lab/biobert-v1.1")
+model = AutoModel.from_pretrained("dmis-lab/biobert-v1.1")
+
 # Get text embedding
 def get_cls_embedding(text):
     inputs = tokenizer(text, return_tensors="pt", padding=True, truncation=True, max_length=512)
