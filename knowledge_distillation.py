@@ -22,6 +22,11 @@ import KD.text_embedding
 from KD.text_embedding import get_cls_embedding
 from KD.Classifier_ECG import MLPECG
 from KD.Classifier_Text import MLPText
+from KD.text_decoder import MLPDecoder
+
+# Load BioBERT Model
+tokenizer = AutoTokenizer.from_pretrained("dmis-lab/biobert-v1.1")
+model = AutoModel.from_pretrained("dmis-lab/biobert-v1.1")
 
 ### Synthetic data for testing
 # Create a simple dataset
@@ -78,12 +83,14 @@ if __name__ == '__main__':
     # Initialize models
     ecg_mlp = MLPECG(input_dim = embedding_dim, hidden_dim = 256, num_classes = num_classes)
     text_mlp = MLPText(input_dim = embedding_dim, hidden_dim = 256, num_classes = num_classes)
+    decoder_mlp = MLPDecoder(input_dim = embedding_dim, hidden_dim = 256, vocab_size = len(tokenizer))
     print("Models initialized")
 
     # Initialize optimizer and loss functions
     optimizer = torch.optim.Adam(list(ecg_mlp.parameters()) + list(text_mlp.parameters()), lr=0.001)
     classification_loss = nn.CrossEntropyLoss()
     kl_loss = nn.KLDivLoss(reduction="batchmean")
+    reconstruction_loss = nn.CrossEntropyLoss()
     print("Optimizer and losses initialized")
     
     # Training
@@ -91,6 +98,7 @@ if __name__ == '__main__':
     for epoch in range(epochs):
         ecg_mlp.train()
         text_mlp.train()
+        decoder_mlp.train()
         
         with tqdm(dataloader, desc = f"Epoch {epoch + 1}", total = len(dataloader)) as pbar:
             for ecg_batch, text_batch, label_batch in pbar:
@@ -101,6 +109,18 @@ if __name__ == '__main__':
                 log_ecg_outputs = F.log_softmax(ecg_outputs, dim = 1)
                 text_outputs = text_mlp(text_batch) # [batch_size, num_classes]
                 soft_text_outputs = F.softmax(text_outputs, dim = 1)
+                decoded_text_output = decoder_mlp(text_batch.unsqueeze(0))
+                
+                # Testing
+                print(ecg_outputs)
+                print(ecg_outputs.shape)
+                print()
+                print(label_batch)
+                print(label_batch.shape)
+                print()
+                print(decoded_text_output)
+                print(decoded_text_output.shape)
+                print()
                 
                 # Compute losses
                 prediction_loss = classification_loss(ecg_outputs, label_batch)
