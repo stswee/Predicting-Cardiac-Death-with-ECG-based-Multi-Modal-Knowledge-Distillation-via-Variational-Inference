@@ -20,8 +20,8 @@ from transformers import AutoModel, AutoTokenizer
 # helper functions
 import KD.text_embedding
 from KD.text_embedding import get_cls_embedding
-from models.Classifier_ECG import MLPECG
-from models.Classifier_Text import MLPText
+from KD.Classifier_ECG import MLPECG
+from KD.Classifier_Text import MLPText
 
 ### Synthetic data for testing
 # Create a simple dataset
