@@ -22,7 +22,6 @@ import KD.text_embedding
 from KD.text_embedding import get_cls_embedding
 from KD.Classifier_ECG import MLPECG
 from KD.Classifier_Text import MLPText
-from KD.text_decoder import MLPDecoder
 
 # Load BioBERT Model
 tokenizer = AutoTokenizer.from_pretrained("dmis-lab/biobert-v1.1")
@@ -42,6 +41,18 @@ class ECGTextDataset(Dataset):
     def __getitem__(self, idx):
         return self.ecg_data[idx], self.text_data[idx], self.labels[idx]
 ###
+
+# Define a unified model combining both classifiers
+class ECGTextMLP(nn.Module):
+    def __init__(self, input_dim, hidden_dim, num_classes):
+        super(ECGTextMLP, self).__init__()
+        self.ecg_mlp = MLPECG(input_dim=input_dim, hidden_dim=hidden_dim, num_classes=num_classes)
+        self.text_mlp = MLPText(input_dim=input_dim, hidden_dim=hidden_dim, num_classes=num_classes)
+
+    def forward(self, ecg_input, text_input):
+        ecg_output = self.ecg_mlp(ecg_input)  # [batch_size, num_classes]
+        text_output = self.text_mlp(text_input)  # [batch_size, num_classes]
+        return ecg_output, text_output
 
 if __name__ == '__main__':
 
@@ -81,13 +92,11 @@ if __name__ == '__main__':
     ###
     
     # Initialize models
-    ecg_mlp = MLPECG(input_dim = embedding_dim, hidden_dim = 256, num_classes = num_classes)
-    text_mlp = MLPText(input_dim = embedding_dim, hidden_dim = 256, num_classes = num_classes)
-    decoder_mlp = MLPDecoder(input_dim = embedding_dim, hidden_dim = 256, vocab_size = len(tokenizer))
+    combined_model = ECGTextMLP(input_dim=embedding_dim, hidden_dim=256, num_classes=num_classes)
     print("Models initialized")
 
     # Initialize optimizer and loss functions
-    optimizer = torch.optim.Adam(list(ecg_mlp.parameters()) + list(text_mlp.parameters()), lr=0.001)
+    optimizer = torch.optim.Adam(combined_model.parameters(), lr=0.001)
     classification_loss = nn.CrossEntropyLoss()
     kl_loss = nn.KLDivLoss(reduction="batchmean")
     reconstruction_loss = nn.CrossEntropyLoss()
@@ -96,31 +105,16 @@ if __name__ == '__main__':
     # Training
     epochs = 3
     for epoch in range(epochs):
-        ecg_mlp.train()
-        text_mlp.train()
-        decoder_mlp.train()
+        combined_model.train()
         
         with tqdm(dataloader, desc = f"Epoch {epoch + 1}", total = len(dataloader)) as pbar:
             for ecg_batch, text_batch, label_batch in pbar:
                 optimizer.zero_grad()
                 
                 # Forward pass
-                ecg_outputs = ecg_mlp(ecg_batch) # [batch_size, num_classes]
-                log_ecg_outputs = F.log_softmax(ecg_outputs, dim = 1)
-                text_outputs = text_mlp(text_batch) # [batch_size, num_classes]
-                soft_text_outputs = F.softmax(text_outputs, dim = 1)
-                decoded_text_output = decoder_mlp(text_batch.unsqueeze(0))
-                
-                # Testing
-                print(ecg_outputs)
-                print(ecg_outputs.shape)
-                print()
-                print(label_batch)
-                print(label_batch.shape)
-                print()
-                print(decoded_text_output)
-                print(decoded_text_output.shape)
-                print()
+                ecg_outputs, text_outputs = combined_model(ecg_batch, text_batch)
+                log_ecg_outputs = F.log_softmax(ecg_outputs, dim=1)
+                soft_text_outputs = F.softmax(text_outputs, dim=1)
                 
                 # Compute losses
                 prediction_loss = classification_loss(ecg_outputs, label_batch)
