@@ -27,32 +27,29 @@ ecg <- seq(63, 71) # 63, 64, ..., 71
 holter <- seq(74, 92) # 74, 75, ..., 92
 medications <- seq(93, 105) # 93, 94, ..., 105
 
-# Limit study to patients with sinus rhythms
-df_sinus <- df[df$`Holter  rhythm` == 0, ] # 710 patients
+# Limit study to patients with Holter ECGs
+df_holter <- df[df$`Holter available` == 1, ] # 992 -> 936
 
-# Assign patients with exit of study as NA to values of 0 (assume survivor)
-df_sinus$`Exit of the study`[is.na(df_sinus$`Exit of the study`)] <- 0 
+# Assign patients with exit of study as NA to values of 0 (survivor)
+df_holter$`Exit of the study`[is.na(df_holter$`Exit of the study`)] <- 0
 
-# Remove patients who were lost to follow-up or had cardiac transplantation
-df_sinus <- df_sinus[df_sinus$`Exit of the study` == 0 | df_sinus$`Exit of the study` == 3,] # 694 patients
+# Keep only patients that were either survivors or died
+# Exclude patients lost to follow-up or had cardiac transplantation
+df_holter <- df_holter[df_holter$`Exit of the study` == 0 | df_holter$`Exit of the study` == 3, ] # 936 -> 906
 
 # Remove patients with non-cardiac deaths
-df_sinus <- df_sinus[df_sinus$`Cause of death` != 1, ] # Down to 663 patients
+df_holter <- df_holter[df_holter$`Cause of death` != 1, ] # 906 -> 849
 
 # Reassign pump failure values to only be 7
-df_sinus$`Cause of death`[df_sinus$`Cause of death` == 7] <- 6
-
-# Get patients with Holter ECG
-# df_sinus <- df_sinus %>% filter(df_sinus$`Hig-resolution ECG available` != 0)
-df_sinus <- df_sinus %>% filter(df_sinus$`Holter available` != 0) # Results in 604 patients
+df_holter$`Cause of death`[df_holter$`Cause of death` == 7] <- 6
 
 # Sort by class
-df_sinus <- df_sinus[order(df_sinus$`Cause of death`),]
+df_holter <- df_holter[order(df_holter$`Cause of death`),]
 
 # Number in each class
-table(df_sinus$`Cause of death`)
+table(df_holter$`Cause of death`)
 
 # Print dataframe to csv file (to later be used in Python)
-write.csv(df_sinus, file = "../Data/subject-info-cleaned.csv")
+write.csv(df_holter, file = "../Data/subject-info-cleaned.csv")
 
 
