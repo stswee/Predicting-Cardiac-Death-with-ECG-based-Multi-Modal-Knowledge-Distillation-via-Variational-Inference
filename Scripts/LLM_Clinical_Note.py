@@ -10,6 +10,10 @@ import re
 from tqdm import tqdm
 import pandas as pd
 
+# Set GPUs
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "1,2"
+
 # Set seeds
 random.seed(0)
 torch.manual_seed(0)
