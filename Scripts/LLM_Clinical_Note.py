@@ -15,7 +15,7 @@ random.seed(0)
 torch.manual_seed(0)
 
 def get_message(note):
-    system = 'You are a medical assistant. Your tasks are to generate a clinical note and create an Assessment and Plan section. Additionally, you will also determine the fate of the patient. The patient either survives for the next few years or succumbs to either sudden cardiac death or pump failure death. Only suggest death if there is strong evidence for it. Provide your confidence in survival, sudden cardiac death, and pump failure death such that the confidence percentages add up to 100 percent and format these results in a list. Please output a clinical note that has a section for demographics, medical history, lab results, LVEF, medication, and ECG impressions. In the end, put the Assessment and Plan section along with a prediction. Provide reasoning for the prediction.'
+    system = 'You are a medical assistant. Your tasks are to generate a clinical note and create an Assessment and Plan section. Additionally, you will also determine the fate of the patient. The patient either survives for the next few years or succumbs to either sudden cardiac death or pump failure death. Only suggest death if there is strong evidence for it. Provide your confidence in survival, sudden cardiac death, and pump failure death such that the confidence percentages add up to 100 percent and format these results in a list. Do not have ties. Please output a clinical note that has a section for demographics, medical history, lab results, LVEF, medication, and ECG impressions. In the end, put the Assessment and Plan section along with a prediction. Provide reasoning for the prediction.'
 
     prompt = f"Here is the patient data: \n{note}"
 
