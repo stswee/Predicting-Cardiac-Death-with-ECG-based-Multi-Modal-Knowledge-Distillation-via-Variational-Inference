@@ -12,7 +12,7 @@ import pandas as pd
 
 # Set GPUs
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "1,2"
+os.environ["CUDA_VISIBLE_DEVICES"] = "3,5"
 
 # Set seeds
 random.seed(0)
@@ -72,5 +72,5 @@ if __name__ == "__main__":
         df.loc[i, 'Reports'] = result
 
     # Store dataframe as csv file
-    df.to_csv("../Data/subject-info-cleaned-with-prompts-and-notes-combined-deaths.csv")
+    df.to_csv("../Data/subject-info-cleaned-with-prompts-and-notes-combined-deaths_Llama8B.csv")
     
